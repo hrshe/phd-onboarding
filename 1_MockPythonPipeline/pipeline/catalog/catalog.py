@@ -6,7 +6,7 @@ class Catalog:
     def __init__(self, name):
         self.name = name
         self.sources: List[Source] = []
-        logger.debug(f"catalog constructed with name: ({name})")
+        logger.debug(f"new catalog constructed with name: ({name})")
 
     def get_name(self):
         return self.name
@@ -27,9 +27,9 @@ class Source:
     def __init__(self, coordinates, brightness):
         self.coordinates = coordinates
         self.brightness = brightness
-        logger.debug(f"source constructed with "
+        logger.debug(f"new source constructed with "
                      f"coordinates: ({coordinates.to_string(style='hmsdms')}) "
-                     f"and brightness {brightness}")
+                     f"and brightness {brightness} units")
 
     def get_coordinates(self):
         return self.coordinates
@@ -46,4 +46,4 @@ class Source:
     def get_info(self):
         return f"source has " \
                f"coordinates: ({self.coordinates.to_string(style='hmsdms')}) " \
-               f"and brightness {self.brightness}"
+               f"and brightness {self.brightness} units"
