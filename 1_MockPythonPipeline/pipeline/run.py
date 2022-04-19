@@ -1,22 +1,14 @@
-from astropy.coordinates import SkyCoord
-
 from pipeline.base_logger import logger
-from pipeline.catalog.catalog import Catalog, Source
-from pipeline.catalog.utils import Utilities
+from pipeline.catalog.catalog import Catalog
 
 
 def do_something():
     logger.info("this is info logging in run")
     logger.debug("this is debug logging in run")
 
-    utils = Utilities()
-
-
-    sources = utils.read_catalog_file("1.cat")
-    logger.info(sources[0].get_info())
-    logger.info(sources[1].get_info())
-    logger.info(len(sources))
-
+    cat1 = Catalog("test catalog")
+    cat1.read_catalog_files(["1.cat", "2.cat"])
+    logger.info(cat1.get_info())
 
 
 if __name__ == '__main__':

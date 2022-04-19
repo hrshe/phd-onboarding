@@ -1,7 +1,4 @@
 from pathlib import Path
-from pipeline.base_logger import logger
-from pipeline.catalog.catalog import Source
-from astropy.coordinates import SkyCoord
 
 
 class Utilities:
@@ -18,19 +15,3 @@ class Utilities:
 
     def get_measurement_set_path(self):
         return self.measurement_set_path
-
-    def read_catalog_file(self, filename):
-        file_path = self.resources_dir_path + f'/{filename}'
-        sources = []
-        with open(file_path) as file:
-            for line in file:
-                if line.startswith("#"):
-                    continue
-                ra, dec, brightness = line.replace(" ", "").rstrip("\n").split(',')
-                sources.append(Source(SkyCoord(ra, dec, frame="fk5"), brightness))
-                logger.debug(f"source with "
-                             f"coordinates ({ra},{dec}) and brightness {brightness} "
-                             f"read from catalog file: {filename}")
-
-        logger.info(f"{len(sources)} read from catalog file: {filename}")
-        return sources
