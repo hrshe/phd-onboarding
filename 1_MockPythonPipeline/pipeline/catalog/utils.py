@@ -4,6 +4,7 @@ import configparser
 
 config = configparser.ConfigParser()
 
+
 class Utilities:
     def __init__(self):
         self.root_dir_path = str(Path(__file__).parent.parent.parent.absolute())
@@ -13,7 +14,6 @@ class Utilities:
 
         config.read(self.config_file_path)
         self.speed_of_light = float(config['general']['speed_of_light'])
-
 
     def get_root_dir_path(self):
         return self.root_dir_path
@@ -25,5 +25,5 @@ class Utilities:
         return self.measurement_set_path
 
     def set_measurement_set_path(self, filename):
-        self.measurement_set_path = self.resources_dir_path + '/' + filename  # todo - to be set from config file
+        self.measurement_set_path = self.resources_dir_path + '/' + filename
         logger.debug(f"measurement set file path set as: {self.measurement_set_path}")
