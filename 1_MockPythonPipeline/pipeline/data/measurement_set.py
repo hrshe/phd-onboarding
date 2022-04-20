@@ -79,3 +79,5 @@ class MeasurementSet:
         self.measurement_set_data.putcol("CORRECTED_DATA", simulated_data)
         self.measurement_set_data.close()
         logger.info(f"simulated sources saved to file: {self.measurement_set_path}")
+        logger.debug(f"lock released for measurement set file: {self.measurement_set_path}")
+
