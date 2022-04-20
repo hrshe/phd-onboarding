@@ -68,7 +68,6 @@ class MeasurementSet:
                                              + m * self.v_all_frequencies)) # todo - include brightness
             simulated_data_with_polarization = simulated_data_with_polarization + \
                                      np.repeat(simulated_data[:, :, np.newaxis], 4, axis=2)
-            logger.info(simulated_data_with_polarization.shape)
         simulated_data_with_polarization[:, :, 1:3] = 0
         logger.info(f"simulated data for all {len(sources)} sources")
 
@@ -80,6 +79,3 @@ class MeasurementSet:
         self.measurement_set_data.putcol("CORRECTED_DATA", simulated_data)
         self.measurement_set_data.close()
         logger.info(f"simulated sources saved to file: {self.measurement_set_path}")
-
-
-

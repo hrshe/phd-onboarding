@@ -1,7 +1,6 @@
 from pipeline.argument_parser import arg_parser
 from pipeline.base_logger import logger
 from pipeline.catalog.catalog import Catalog
-
 from pipeline.data.measurement_set import MeasurementSet
 from pipeline.globals import utils
 
@@ -11,7 +10,6 @@ def do_something(ms_filename, cat_filename_list):
 
     cat1 = Catalog("test catalog")
     cat1.read_catalog_files(cat_filename_list)
-    logger.info(cat1.get_info())
 
     ms = MeasurementSet()
     ms.load_measurement_set()

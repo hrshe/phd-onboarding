@@ -17,7 +17,7 @@ class Coordinates(SkyCoord):
         m = np.sin(new_dec) * np.cos(phasecenter_dec) - \
             np.cos(new_dec) * np.sin(phasecenter_dec) * np.cos(delta_ra)
 
-        logger.debug(f"l={l} and m={m} for source "
+        logger.debug(f"computed l={l} and m={m} for source "
                      f"coordinates: {self.to_string(style='hmsdms')}")
         return l, m
 
@@ -52,7 +52,7 @@ class Catalog:
     def __init__(self, name):
         self.name = name
         self.sources: List[Source] = []
-        logger.debug(f"new catalog constructed with name: ({name})")
+        logger.debug(f"new catalog constructed with name: \"{name}\"")
 
     def get_name(self):
         return self.name
@@ -62,7 +62,7 @@ class Catalog:
 
     def add_sources(self, sources):
         self.sources.extend(sources)
-        logger.debug(f"{len(sources)} new sources added to catalog ({self.name})")
+        logger.debug(f"{len(sources)} new sources added to catalog \"{self.name}")
 
     def get_info(self):
         return f"catalog ({self.name}) " \
@@ -80,15 +80,16 @@ class Catalog:
                 logger.debug(f"source with "
                              f"coordinates ({ra},{dec}) and brightness {brightness} "
                              f"read from catalog file: {filename} "
-                             f"for catalog {self.name}")
+                             f"added to catalog \"{self.name}\"")
 
-        logger.info(f"{len(sources)} read from catalog file: {filename} "
-                    f"for catalog {self.name}\n")
+        logger.info(f"{len(sources)} sources read from catalog file: {filename} "
+                    f"for catalog \"{self.name}\"\n")
         return sources
 
     def read_catalog_files(self, filename_list):
         sources = []
         for filename in filename_list:
             sources.extend(self.read_catalog_file(filename))
-        logger.info(f"catalog files {filename_list} read into catalog {self.name}")
         self.add_sources(sources)
+        logger.info(f"catalog files {filename_list} successfully read into catalog \"{self.name}\"\n")
+

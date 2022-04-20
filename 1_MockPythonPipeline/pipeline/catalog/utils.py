@@ -29,4 +29,4 @@ class Utilities:
 
     def set_measurement_set_path(self, filename):
         self.measurement_set_path = self.resources_dir_path + '/' + filename
-        logger.debug(f"measurement set file path set as: {self.measurement_set_path}")
+        logger.debug(f"measurement set file path set as: {self.measurement_set_path}\n")
