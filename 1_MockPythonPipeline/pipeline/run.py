@@ -5,7 +5,7 @@ from pipeline.data.measurement_set import MeasurementSet
 from pipeline.utilities.globals import utils
 
 
-def do_something(ms_filename, cat_filename_list):
+def pipeline(ms_filename, cat_filename_list):
     utils.set_measurement_set_path(ms_filename)
 
     cat1 = Catalog("test catalog")
@@ -15,8 +15,12 @@ def do_something(ms_filename, cat_filename_list):
     ms.load_measurement_set()
     ms.load_spectral_window()
     ms.get_uv_for_all_frequencies()
-    simulated_data = ms.simulate_sources(cat1.sources)
-    ms.update_corrected_data_column(simulated_data)
+    simulated_visibilities = ms.simulate_sources(cat1.sources)
+    ms.update_corrected_data_column(simulated_visibilities)
+
+    ms.close_measurement_set()
+    ms.close_spectral_window()
+
 
 
 if __name__ == '__main__':
@@ -24,4 +28,4 @@ if __name__ == '__main__':
     if arguments.verbose:
         logger.getLogger().setLevel(logger.DEBUG)
         logger.info("printing logs in verbose")
-    do_something(arguments.msr_set, arguments.cat_list)
+    pipeline(arguments.msr_set, arguments.cat_list)

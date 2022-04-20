@@ -22,7 +22,7 @@ class Coordinates(SkyCoord):
 
 
 class Source:
-    def __init__(self, coordinates: Coordinates, brightness):
+    def __init__(self, coordinates: Coordinates, brightness: float):
         self.coordinates = coordinates
         self.brightness = brightness
         logger.debug(f"new source constructed with "
@@ -75,7 +75,7 @@ class Catalog:
                 if line.startswith("#"):
                     continue
                 ra, dec, brightness = line.replace(" ", "").rstrip("\n").split(',')
-                sources.append(Source(Coordinates(ra, dec, frame="fk5"), brightness))
+                sources.append(Source(Coordinates(ra, dec, frame="fk5"), float(brightness)))
                 logger.debug(f"source with "
                              f"coordinates ({ra},{dec}) and brightness {brightness} "
                              f"read from catalog file: {filename} "

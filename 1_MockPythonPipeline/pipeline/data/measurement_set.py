@@ -35,12 +35,6 @@ class MeasurementSet:
         self.spectral_window_data.close()
         logger.debug(f"spectral window closed")
 
-    def get_measurement_set_info(self):
-        return self.measurement_set_data.info()
-
-    def get_spectral_window_info(self):
-        return self.spectral_window_data.info()
-
     def get_uv_for_all_frequencies(self):
         u_dist, v_dist, _ = self.measurement_set_data.getcol("UVW").T
         frequencies = self.spectral_window_data.getcol("CHAN_FREQ")[0]
@@ -59,19 +53,19 @@ class MeasurementSet:
         return u, v
 
     def simulate_sources(self, sources: List[Source]):
-        simulated_data_with_polarization = np.zeros(
+        simulated_polarization_visibilities = np.zeros(
             (self.u_all_frequencies.shape[0], self.u_all_frequencies.shape[1], 4))
         for source in sources:
             l, m = source.get_coordinates().radec2lm(Coordinates(utils.phase_center_str, frame="fk5"))
-            simulated_data = np.exp(1j * 2 * np.pi *
-                                    (l * self.u_all_frequencies
-                                     + m * self.v_all_frequencies))  # todo - include brightness
-            simulated_data_with_polarization = simulated_data_with_polarization + \
-                                               np.repeat(simulated_data[:, :, np.newaxis], 4, axis=2)
-        simulated_data_with_polarization[:, :, 1:3] = 0
+            simulated_visibilities = source.get_brightness() * np.exp(1j * 2 * np.pi
+                                              * (l * self.u_all_frequencies
+                                                 + m * self.v_all_frequencies))
+            simulated_polarization_visibilities = simulated_polarization_visibilities + \
+                                                       np.repeat(simulated_visibilities[:, :, np.newaxis], 4, axis=2)
+        simulated_polarization_visibilities[:, :, 1:3] = 0
         logger.info(f"simulated data for all {len(sources)} sources")
 
-        return simulated_data_with_polarization
+        return simulated_polarization_visibilities
 
     def update_corrected_data_column(self, simulated_data):
         self.measurement_set_data.close()
@@ -80,4 +74,3 @@ class MeasurementSet:
         self.measurement_set_data.close()
         logger.info(f"simulated sources saved to file: {self.measurement_set_path}")
         logger.debug(f"lock released for measurement set file: {self.measurement_set_path}")
-
