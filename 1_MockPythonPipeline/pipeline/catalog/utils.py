@@ -1,6 +1,8 @@
 from pathlib import Path
 from pipeline.base_logger import logger
+
 import configparser
+
 
 config = configparser.ConfigParser()
 
@@ -14,6 +16,7 @@ class Utilities:
 
         config.read(self.config_file_path)
         self.speed_of_light = float(config['general']['speed_of_light'])
+        self.phase_center_str = config['general']['phase_center_ra_dec']
 
     def get_root_dir_path(self):
         return self.root_dir_path

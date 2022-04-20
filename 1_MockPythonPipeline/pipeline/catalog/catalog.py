@@ -1,10 +1,9 @@
 from typing import List
 from astropy.coordinates import SkyCoord
 from pipeline.base_logger import logger
-from pipeline.catalog.utils import Utilities
 import numpy as np
 
-utils = Utilities()
+from pipeline.globals import utils
 
 
 class Coordinates(SkyCoord):
@@ -17,11 +16,14 @@ class Coordinates(SkyCoord):
         l = np.cos(new_dec) * np.sin(delta_ra)
         m = np.sin(new_dec) * np.cos(phasecenter_dec) - \
             np.cos(new_dec) * np.sin(phasecenter_dec) * np.cos(delta_ra)
+
+        logger.debug(f"l={l} and m={m} for source "
+                     f"coordinates: {self.to_string(style='hmsdms')}")
         return l, m
 
 
 class Source:
-    def __init__(self, coordinates, brightness):
+    def __init__(self, coordinates: Coordinates, brightness):
         self.coordinates = coordinates
         self.brightness = brightness
         logger.debug(f"new source constructed with "
