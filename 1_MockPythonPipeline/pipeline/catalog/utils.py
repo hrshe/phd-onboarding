@@ -1,4 +1,5 @@
 from pathlib import Path
+from pipeline.base_logger import logger
 
 
 class Utilities:
@@ -18,4 +19,4 @@ class Utilities:
 
     def set_measurement_set_path(self, filename):
         self.measurement_set_path = self.resources_dir_path + '/' + filename  # todo - to be set from config file
-
+        logger.debug(f"measurement set file path set as: {self.measurement_set_path}")

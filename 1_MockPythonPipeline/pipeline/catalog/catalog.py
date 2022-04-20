@@ -81,7 +81,7 @@ class Catalog:
                              f"for catalog {self.name}")
 
         logger.info(f"{len(sources)} read from catalog file: {filename} "
-                    f"for catalog {self.name}")
+                    f"for catalog {self.name}\n")
         return sources
 
     def read_catalog_files(self, filename_list):
