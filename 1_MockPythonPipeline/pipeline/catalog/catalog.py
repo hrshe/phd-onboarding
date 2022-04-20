@@ -69,7 +69,7 @@ class Catalog:
     def read_catalog_file(self, filename):
         file_path = utils.get_resources_dir_path() + f'/{filename}'
         sources = []
-        with open(file_path) as file:
+        with open(file_path, "r") as file:
             for line in file:
                 if line.startswith("#"):
                     continue
