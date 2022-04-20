@@ -5,7 +5,7 @@ class Utilities:
     def __init__(self):
         self.root_dir_path = str(Path(__file__).parent.parent.parent.absolute())
         self.resources_dir_path = self.root_dir_path + '/resources'
-        self.measurement_set_path = self.resources_dir_path + '/test.ms' # todo - to be set from config file
+        self.measurement_set_path = None
 
     def get_root_dir_path(self):
         return self.root_dir_path
@@ -15,3 +15,7 @@ class Utilities:
 
     def get_measurement_set_path(self):
         return self.measurement_set_path
+
+    def set_measurement_set_path(self, filename):
+        self.measurement_set_path = self.resources_dir_path + '/' + filename  # todo - to be set from config file
+

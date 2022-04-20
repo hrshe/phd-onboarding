@@ -2,8 +2,22 @@ from typing import List
 from astropy.coordinates import SkyCoord
 from pipeline.base_logger import logger
 from pipeline.catalog.utils import Utilities
+import numpy as np
 
 utils = Utilities()
+
+
+class Coordinates(SkyCoord):
+    def radec2lm(self, phasecenter_coordinates):
+        phasecenter_ra = phasecenter_coordinates.ra.rad
+        phasecenter_dec = phasecenter_coordinates.dec.rad
+        new_ra = self.ra.rad
+        new_dec = self.dec.rad
+        delta_ra = new_ra - phasecenter_ra
+        l = np.cos(new_dec) * np.sin(delta_ra)
+        m = np.sin(new_dec) * np.cos(phasecenter_dec) - \
+            np.cos(new_dec) * np.sin(phasecenter_dec) * np.cos(delta_ra)
+        return l, m
 
 
 class Source:
@@ -60,7 +74,7 @@ class Catalog:
                 if line.startswith("#"):
                     continue
                 ra, dec, brightness = line.replace(" ", "").rstrip("\n").split(',')
-                sources.append(Source(SkyCoord(ra, dec, frame="fk5"), brightness))
+                sources.append(Source(Coordinates(ra, dec, frame="fk5"), brightness))
                 logger.debug(f"source with "
                              f"coordinates ({ra},{dec}) and brightness {brightness} "
                              f"read from catalog file: {filename} "
@@ -76,4 +90,3 @@ class Catalog:
             sources.extend(self.read_catalog_file(filename))
         logger.info(f"catalog files {filename_list} read into catalog {self.name}")
         self.add_sources(sources)
-
