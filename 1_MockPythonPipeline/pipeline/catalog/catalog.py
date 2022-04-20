@@ -1,9 +1,8 @@
+import numpy as np
 from typing import List
 from astropy.coordinates import SkyCoord
-from pipeline.base_logger import logger
-import numpy as np
-
-from pipeline.globals import utils
+from pipeline.utilities.base_logger import logger
+from pipeline.utilities.globals import utils
 
 
 class Coordinates(SkyCoord):
@@ -92,4 +91,3 @@ class Catalog:
             sources.extend(self.read_catalog_file(filename))
         self.add_sources(sources)
         logger.info(f"catalog files {filename_list} successfully read into catalog \"{self.name}\"\n")
-

@@ -1,13 +1,11 @@
 from pathlib import Path
-from pipeline.base_logger import logger
-
+from pipeline.utilities.base_logger import logger
 import configparser
-
 
 config = configparser.ConfigParser()
 
 
-class Utilities:
+class ContextHolder:
     def __init__(self):
         self.root_dir_path = str(Path(__file__).parent.parent.parent.absolute())
         self.resources_dir_path = self.root_dir_path + '/resources'

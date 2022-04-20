@@ -1,10 +1,9 @@
-from pipeline.base_logger import logger
-from casacore.tables import table
-
-from pipeline.catalog.catalog import Source, Coordinates
-from pipeline.globals import utils
-from typing import List
 import numpy as np
+from typing import List
+from pipeline.utilities.base_logger import logger
+from casacore.tables import table
+from pipeline.catalog.catalog import Source, Coordinates
+from pipeline.utilities.globals import utils
 
 
 class MeasurementSet:
@@ -60,14 +59,15 @@ class MeasurementSet:
         return u, v
 
     def simulate_sources(self, sources: List[Source]):
-        simulated_data_with_polarization = np.zeros((self.u_all_frequencies.shape[0], self.u_all_frequencies.shape[1], 4))
+        simulated_data_with_polarization = np.zeros(
+            (self.u_all_frequencies.shape[0], self.u_all_frequencies.shape[1], 4))
         for source in sources:
             l, m = source.get_coordinates().radec2lm(Coordinates(utils.phase_center_str, frame="fk5"))
             simulated_data = np.exp(1j * 2 * np.pi *
-                                            (l * self.u_all_frequencies
-                                             + m * self.v_all_frequencies)) # todo - include brightness
+                                    (l * self.u_all_frequencies
+                                     + m * self.v_all_frequencies))  # todo - include brightness
             simulated_data_with_polarization = simulated_data_with_polarization + \
-                                     np.repeat(simulated_data[:, :, np.newaxis], 4, axis=2)
+                                               np.repeat(simulated_data[:, :, np.newaxis], 4, axis=2)
         simulated_data_with_polarization[:, :, 1:3] = 0
         logger.info(f"simulated data for all {len(sources)} sources")
 

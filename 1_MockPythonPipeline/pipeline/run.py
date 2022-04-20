@@ -1,8 +1,8 @@
-from pipeline.argument_parser import arg_parser
-from pipeline.base_logger import logger
+from pipeline.utilities.argument_parser import arg_parser
+from pipeline.utilities.base_logger import logger
 from pipeline.catalog.catalog import Catalog
 from pipeline.data.measurement_set import MeasurementSet
-from pipeline.globals import utils
+from pipeline.utilities.globals import utils
 
 
 def do_something(ms_filename, cat_filename_list):
