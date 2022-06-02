@@ -20,7 +20,7 @@ def pipeline(ms_filename, cat_filename_list):
 
     ms.close_measurement_set()
     ms.close_spectral_window()
-    #test comment
+
 
 if __name__ == '__main__':
     arguments = arg_parser.parse_args()
