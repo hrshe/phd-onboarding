@@ -32,7 +32,7 @@ chunks = [ms_list[x:x+8] for x in range(0,len(ms_list), 8)]
 
 def getDDFPredict():
         return f"{DDF} --Data-MS ms_list.txt --Parallel-NCPU 46 " \
-        f"--Image-NPix=7000 --Image-Cell 5 --Weight-Mode=Natural --Output-Also all " \
+        f"--Image-NPix=7000 --Image-Cell 5 --Weight-Mode=Natural --Output-Also all  --Selection-UVRangeKm=0.1,30 " \
         f"--Data-ColName=CORRECTED_DATA  --Predict-ColName=WIDEFIELD_DATA --RIME-DecorrMode=FT " \
         f"--Facets-NFacets=11 --HMP-MajorStallThreshold=0.2 --HMP-Scales=[0,2,4,8,16,32] " \
         f"--Weight-ColName=IMAGING_WEIGHT --Cache-Reset=1 --Output-Mode Predict --Predict-InitDicoModel No{TargetName}.DicoModel "
