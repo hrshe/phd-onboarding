@@ -5,7 +5,6 @@ from casacore.tables import table
 
 start = time.time()
 
-LastSelfCal_Pass = "p2" #TODO 
 region_file = "oj287_1100arcsec.reg"
 TargetName = "OJ287"
 NewColName = "FIELD_SUBTRACTED_DATA_P2"
@@ -32,20 +31,6 @@ Breizorro = "/scratch/WORK/ebonnassieux/DDFpy3.6/bin/breizorro"
 MaskDicoModel = "python /scratch/WORK/ebonnassieux/DDFpy3.6/sources/DDFacet/MyDDF/bin/MaskDicoModel.py"
 
 chunks = [ms_list[x:x+8] for x in range(0,len(ms_list), 8)]
-
-def getDDFPredict():
-        return f"{DDF} --Data-MS ms_list_averaged.txt --Parallel-NCPU 46 --Image-NPix=10000 --Image-Cell 0.25 --Selection-UVRangeKm=[0.1,2000] " \
-        f" --Weight-Mode=Briggs --Weight-Robust=-2.0 --Output-Also all --Data-ColName={CorrectedDataColName} --Predict-ColName={WidefieldDataColName} " \
-        f" --RIME-DecorrMode=FT --Facets-NFacets=11 --HMP-MajorStallThreshold=0.2 --HMP-Scales=[0,2,4,8,16,32] --Weight-ColName=IMAGING_WEIGHT " \
-        f" --Cache-Reset=1 --Deconv-Mode=SSD --GAClean-NSourceKin=200 --GAClean-NMaxGen=150 --Deconv-MaxMajorIter=5 --Freq-NBand=6 " \
-        f" --Output-Mode Predict --Predict-InitDicoModel No{TargetName}.DicoModel --Mask-Auto=True --Mask-SigTh=20  " \
-        f" --Image-PhaseCenterRADEC=[08:54:24.4764,20:12:58.655] "
-
-def getBreizorroCommand():
-        return f"{Breizorro} -r ddf_fullband_{LastSelfCal_Pass}.restored.fits -o oj287_masked.fits --subtract {region_file} -t -99999"
-
-def getMaskDicoModelCommand():
-        return f"{MaskDicoModel} --InDicoModel=ddf_fullband_{LastSelfCal_Pass}.DicoModel --OutDicoModel=No{TargetName}.DicoModel --MaskName=oj287_masked.fits"
 
 def waitingAnimation(process):
         animation = "|/-\\"
