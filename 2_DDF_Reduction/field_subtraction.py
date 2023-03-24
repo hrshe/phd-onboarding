@@ -5,12 +5,12 @@ from casacore.tables import table
 
 start = time.time()
 
-LastSelfCal_Pass = "p2"
-region_file = "oj287_1800arcsec.reg"
+LastSelfCal_Pass = "p2" #TODO 
+region_file = "oj287_1100arcsec.reg"
 TargetName = "OJ287"
-NewColName = "FIELD_SUBTRACTED_DATA_FullBand"
-CorrectedDataColName = "CORRECTED_DATA"
-WidefieldDataColName = "WIDEFIELD_DATA"
+NewColName = "FIELD_SUBTRACTED_DATA_P2"
+CorrectedDataColName = "TARGET_CORRECTED_DATA_P2"
+WidefieldDataColName = "WIDEFIELD_DATA_P2"
 
 ms_list =["L723586_121MHz_uv_pre-cal.ms","L723586_123MHz_uv_pre-cal.ms",
 "L723586_125MHz_uv_pre-cal.ms","L723586_127MHz_uv_pre-cal.ms",
@@ -25,7 +25,7 @@ ms_list =["L723586_121MHz_uv_pre-cal.ms","L723586_123MHz_uv_pre-cal.ms",
 "L723586_160MHz_uv_pre-cal.ms","L723586_162MHz_uv_pre-cal.ms",
 "L723586_164MHz_uv_pre-cal.ms","L723586_166MHz_uv_pre-cal.ms"]
 
-DDF = "python /scratch/WORK/P6_WORKDIR/DDFpy3.10NenuBeam/DDFpy3.10/sources/DDFacet/MyDDF/bin/DDF.py"
+#DDF = "python /scratch/WORK/P6_WORKDIR/DDFpy3.10NenuBeam/DDFpy3.10/sources/DDFacet/MyDDF/bin/DDF.py"
 KMS = "python /scratch/WORK/ebonnassieux/DDFpy3.6/sources/killMS/MykMS/bin/kMS.py"
 ClipCal = "python /scratch/WORK/ebonnassieux/DDFpy3.6/sources/killMS/MykMS/lib/python3.6/site-packages/killMS/ClipCal.py"
 Breizorro = "/scratch/WORK/ebonnassieux/DDFpy3.6/bin/breizorro"
@@ -34,12 +34,12 @@ MaskDicoModel = "python /scratch/WORK/ebonnassieux/DDFpy3.6/sources/DDFacet/MyDD
 chunks = [ms_list[x:x+8] for x in range(0,len(ms_list), 8)]
 
 def getDDFPredict():
-        return f"{DDF} --Data-MS ms_list.txt --Parallel-NCPU 46 " \
-        f"--Image-NPix=7000 --Image-Cell 5 --Weight-Mode=Natural --Output-Also all --Selection-UVRangeKm=0.1,30 " \
-        f"--Data-ColName={CorrectedDataColName}  --Predict-ColName={WidefieldDataColName} --RIME-DecorrMode=FT " \
-        f"--Facets-NFacets=11 --HMP-MajorStallThreshold=0.2 --HMP-Scales=[0,2,4,8,16,32] " \
-        f"--Weight-ColName=IMAGING_WEIGHT --Cache-Reset=1 --Output-Mode Predict --Predict-InitDicoModel No{TargetName}.DicoModel " \
-        f"--Deconv-Mode=SSD --GAClean-NSourceKin=200 --GAClean-NMaxGen=150 --Deconv-MaxMajorIter=5 --Mask-Auto=True --Mask-SigTh=10 --Freq-NBand=6 "
+        return f"{DDF} --Data-MS ms_list_averaged.txt --Parallel-NCPU 46 --Image-NPix=10000 --Image-Cell 0.25 --Selection-UVRangeKm=[0.1,2000] " \
+        f" --Weight-Mode=Briggs --Weight-Robust=-2.0 --Output-Also all --Data-ColName={CorrectedDataColName} --Predict-ColName={WidefieldDataColName} " \
+        f" --RIME-DecorrMode=FT --Facets-NFacets=11 --HMP-MajorStallThreshold=0.2 --HMP-Scales=[0,2,4,8,16,32] --Weight-ColName=IMAGING_WEIGHT " \
+        f" --Cache-Reset=1 --Deconv-Mode=SSD --GAClean-NSourceKin=200 --GAClean-NMaxGen=150 --Deconv-MaxMajorIter=5 --Freq-NBand=6 " \
+        f" --Output-Mode Predict --Predict-InitDicoModel No{TargetName}.DicoModel --Mask-Auto=True --Mask-SigTh=20  " \
+        f" --Image-PhaseCenterRADEC=[08:54:24.4764,20:12:58.655] "
 
 def getBreizorroCommand():
         return f"{Breizorro} -r ddf_fullband_{LastSelfCal_Pass}.restored.fits -o oj287_masked.fits --subtract {region_file} -t -99999"
@@ -72,14 +72,14 @@ def subtractVisibilities(ms_name):
 print(f"starting field subtraction for:\n {ms_list[0][0:7]}")
 
 #first subtract oj287 from field
-with open(f"Breizorro_{LastSelfCal_Pass}.log", "w+") as f:
-   process1 = subprocess.Popen(getBreizorroCommand(), shell=True, stdout=f)
-print("Breizorro source subtraction running")
-waitingAnimation(process1)
-process1.wait()
-print("Breizorro source subtraction from field done")
+# with open(f"Breizorro_{LastSelfCal_Pass}.log", "w+") as f:
+#    process1 = subprocess.Popen(getBreizorroCommand(), shell=True, stdout=f)
+# print("Breizorro source subtraction running")
+# waitingAnimation(process1)
+# process1.wait()
+# print("Breizorro source subtraction from field done")
 
-# #MaskDicoModel
+#MaskDicoModel
 # with open(f"MaskDicoModel_{LastSelfCal_Pass}.log", "w+") as f:
 #    process2 = subprocess.Popen(getMaskDicoModelCommand(), shell=True, stdout=f)
 # print("MaskDicoModel running")
@@ -97,10 +97,10 @@ print("Breizorro source subtraction from field done")
 
 
 # #Subtract modeled visibilities of field from the observation visibilities data
-# for ms in ms_list:
-#         print(f"Subtraction of modeled visibilities running for: {ms}")
-#         subtractVisibilities(ms)
-#         print(f"Subtraction of modeled visibilities done for: {ms}")
+for ms in ms_list:
+        print(f"Subtraction of modeled visibilities running for: {ms}")
+        subtractVisibilities(ms)
+        print(f"Subtraction of modeled visibilities done for: {ms}")
 
-# print("COMPLETED field subtraction for all data")
-# print('It took', time.time()-start, 'seconds.')
+print("COMPLETED field subtraction for all data")
+print('It took', time.time()-start, 'seconds.')
