@@ -1,0 +1,69 @@
+Working in node4 of helles. In path: /scratch/LOFAR/OJ287/LINC_OJ287_June
+
+Frist created a script to set paths:
+Neame: setup_paths.sh
+#!/bin/bash
+export INSTALL_DIR=$(pwd)
+export INPUT_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_TARGET/"
+export INPUT_CALIB_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_CALIBRATOR/"
+export WORK_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_WORKDIR/"
+export OUTPUT_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_WORKDIR/OUTDIR/"
+echo "paths set"
+
+Run this using > source setup_paths.sh
+
+Also create WORK_DIR, scratch and LOG_DIR. Use this script. makeOutputDirs.sh
+#!/bin/bash
+mkdir "$WORK_DIR"
+mkdir "$WORK_DIR"/LOG_DIR/
+mkdir "$WORK_DIR"/scratch/
+mkdir "$WORK_DIR"/OUTDIR/
+
+run this simply using > sh makeOutputDirs.sh
+
+Now setting up and running LINC.
+git clone https://git.astron.nl/RD/LINC.git working_dir
+cd working_dir/LINC
+./build_venv.sh
+source venv/bin/activate
+pip install --upgrade toil[cwl]
+pip install pip install cwltool==3.1.20220628170238
+pip install numpy
+
+Making a script to makeLINCjson_calibrator.py
+
+import os
+import glob
+import numpy as np
+
+ncpu                 = 24
+working_dir          = '/data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_WORKDIR/'
+data_dir             = '/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_CALIBRATOR/'
+linc_dir             = '/scratch/LOFAR/OJ287/LINC_OJ287_June/LINC/'
+msstring             = '*MS'
+linc_calib_parset    = "LINC_calib.json"
+
+
+mslist=np.array(list(np.sort(glob.glob(data_dir+"/"+msstring))))
+lastms=mslist[-1]
+f=open(linc_calib_parset,"w")
+f.write("{\n")
+f.write("    \"msin\": [\n")
+for ms in mslist:
+    if ms!=lastms:
+        f.write("                {\"class\": \"Directory\", \"path\": \""+ms+"\"},\n")
+    else:
+        f.write("                {\"class\": \"Directory\", \"path\": \""+ms+"\"}\n")
+f.write("            ],\n")
+f.write("    \"calibrator_path_skymodel\": {\"class\": \"Directory\", \"path\":\"%s/skymodels/\"},\n"%linc_dir)
+f.write("}\n")
+
+time cwltool --parallel --singularity \
+--outdir $OUTPUT_DIR \
+--tmpdir-prefix "$WORK_DIR"/scratch/  \
+--log-dir "$WORK_DIR"/LOG_DIR/   \
+"$INSTALL_DIR"/LINC/workflows/HBA_calibrator.cwl "$INSTALL_DIR"/LINC_calib.json 2>&1 | tee pipeline.calib.log
+
+
+
+
