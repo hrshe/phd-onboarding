@@ -65,10 +65,106 @@ time cwltool --parallel --singularity \
 "$INSTALL_DIR"/LINC/workflows/HBA_calibrator.cwl "$INSTALL_DIR"/LINC_calib.json 2>&1 | tee pipeline.calib.log
 
 
-
 time cwltool --parallel --singularity                                                      \
 --outdir /data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_TARGET_WORKDIR/OUTDIR/                 \
 --tmpdir-prefix /data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_TARGET_WORKDIR/scratch/         \
 --log-dir /data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_TARGET_WORKDIR/LOGDIR                 \
 /scratch/LOFAR/OJ287/LINC_OJ287_June/LINC/workflows/HBA_target.cwl                         \
 LINC_target.json 2>&1 | tee pipeline.target.log 
+
+LINC target too worked beautifully and succeeded in 530minutes (~9 hours)
+
+Copy solutions from LINC target into the INPUT_DIR
+cp "$WORK_DIR"/OUTDIR/cal_solutions.h5  ${INPUT_DIR}
+
+
+Now setting up CWL pipeline in path: hshetgaonkar@node4:/scratch/LOFAR/OJ287/CWL_OJ287_June
+
+Created setup_paths.sh:
+----
+#!/bin/bash
+export INSTALL_DIR=$(pwd)
+export INPUT_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_TARGET/"
+export INPUT_CALIB_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_CALIBRATOR/"
+export WORK_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/CWL_DelayCalibration_WORKDIR/"
+export OUTPUT_DIR="$WORK_DIR""OUTDIR/"
+
+echo "paths set"
+----
+
+Run $source setup_paths.sh
+
+Created makeDirs.sh:
+-----
+#!/bin/bash
+mkdir "$WORK_DIR"
+mkdir "$WORK_DIR"/LOG_DIR/
+mkdir "$WORK_DIR"/scratch/
+mkdir "$WORK_DIR"/OUTDIR/
+-----
+sh makeDirs.sh
+
+Clone the required repositories:
+git clone https://git.astron.nl/RD/VLBI-cwl.git ${INSTALL_DIR}/vlbi
+git clone https://github.com/jurjen93/lofar_helpers.git ${INSTALL_DIR}/lofar_helpers
+git clone https://github.com/rvweeren/lofar_facet_selfcal.git ${INSTALL_DIR}/lofar_facet_selfcal
+
+Also needs LINC. COMMENT: Better to have LINC and other scripts setup in the same directory. Instead of cloning LINC again. But then also have to create a seperate "RUN_DIR"
+git clone https://git.astron.nl/RD/LINC.git ${INSTALL_DIR}
+cd LINC
+./build_venv.sh
+
+Download containers. Latest container can be found here: https://tikk3r.github.io/flocs/
+wget -O ${INSTALL_DIR}/vlbi.sif https://lofar-webdav.grid.sara.nl/software/shub_mirror/tikk3r/lofar-grid-hpccloud/intel/flocs_v4.5.0_sandybridge_sandybridge_mkl_cuda.sif?action=show
+
+wget plot_field:
+wget https://raw.githubusercontent.com/jwpetley/lofar_plotting/main/plot_field.py ${INSTALL_DIR}
+
+singularity exec \
+  --bind ${INSTALL_DIR},${INPUT_DIR},${OUTPUT_DIR},${WORK_DIR} \
+  --env PATH="${INSTALL_DIR}/vlbi/scripts:\$PATH" \
+  --env PYTHONPATH="${INSTALL_DIR}/vlbi/scripts:\$PYTHONPATH" \
+  --env VLBI_DATA_ROOT="${INSTALL_DIR}/vlbi" \
+  ${INSTALL_DIR}/vlbi.sif \
+  python3 ${INSTALL_DIR}/plot_field.py --targRA 133.703 --targDEC 20.108 --MS ${INPUT_DIR}/L723586_SB037_uv.MS
+
+rm temp.fits
+cp delay_calibrators.csv ${INPUT_DIR}
+
+bash ${INSTALL_DIR}/vlbi/scripts/generate_input.sh ${INPUT_DIR} ${INSTALL_DIR}
+
+create setup_declaycal_paths.sh:
+
+-----
+#!/bin/bash
+export PATH=${INSTALL_DIR}:$PATH
+export PYTHONPATH=${INSTALL_DIR}:$PYTHONPATH
+export PATH=${INSTALL_DIR}/vlbi/scripts:$PATH
+export PYTHONPATH=${INSTALL_DIR}/vlbi/scripts:$PYTHONPATH
+-----
+
+singularity exec \
+  --bind ${INSTALL_DIR},${INPUT_DIR},${OUTPUT_DIR},${WORK_DIR},${LOG_DIR} \
+  --env PATH="${INSTALL_DIR}/vlbi/scripts:\$PATH" \
+  --env PYTHONPATH="${INSTALL_DIR}/vlbi/scripts:\$PYTHONPATH" \
+  --env VLBI_DATA_ROOT="${INSTALL_DIR}/vlbi" \
+  ${INSTALL_DIR}/vlbi.sif \
+  cwltool \
+  --no-container \
+  --preserve-entire-environment \
+  --parallel \
+  --timestamps \
+  --outdir ${OUTPUT_DIR} \
+  --tmpdir-prefix ${WORK_DIR}/scratch/ \
+  --log-dir ${WORK_DIR}/LOG_DIR/ \
+  --leave-tmpdir \
+  --debug \
+  ${INSTALL_DIR}/vlbi/workflows/delay-calibration.cwl \
+  input.yaml 2>&1 | tee ${INSTALL_DIR}/pipeline.delay_calibrator.log 
+
+
+
+
+
+
+
