@@ -66,4 +66,9 @@ time cwltool --parallel --singularity \
 
 
 
-
+time cwltool --parallel --singularity                                                      \
+--outdir /data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_TARGET_WORKDIR/OUTDIR/                 \
+--tmpdir-prefix /data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_TARGET_WORKDIR/scratch/         \
+--log-dir /data/LOFAR/P6/OJ287/LC12_Mooney_June/LINC_TARGET_WORKDIR/LOGDIR                 \
+/scratch/LOFAR/OJ287/LINC_OJ287_June/LINC/workflows/HBA_target.cwl                         \
+LINC_target.json 2>&1 | tee pipeline.target.log 
