@@ -197,3 +197,39 @@ This command worked beautifully and succeeded. Note:
 I ran the pipeline  yesterday night by writing Source_id value for my delay calibrator as  @Nadia Biava had suggested. So instead of just the name “OJ287”, I set it as “ILT085448+200630" and now the pipeline finished successfully
 
 
+Feb 15:
+Now running split directions for testing branch:
+
+export INSTALL_DIR=$(pwd)
+export INPUT_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_TARGET/shortData/"
+export INPUT_CALIB_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/DATA_OBS1_CALIBRATOR/"
+export WORK_DIR="/data/LOFAR/P6/OJ287/LC12_Mooney_June/CWL_DelayCalibration_ShortData_3_WORKDIR/"
+export OUTPUT_DIR="$WORK_DIR""OUTDIR/"
+
+
+
+mkdir "$WORK_DIR"
+mkdir "$WORK_DIR"/LOG_DIR/
+mkdir "$WORK_DIR"/scratch/
+mkdir "$WORK_DIR"/OUTDIR/
+
+singularity exec \
+  --bind ${INSTALL_DIR},${INPUT_DIR},${OUTPUT_DIR},${WORK_DIR},${LOG_DIR} \
+  --env PATH="${INSTALL_DIR}/vlbi/scripts:\$PATH" \
+  --env PYTHONPATH="${INSTALL_DIR}/vlbi/scripts:\$PYTHONPATH" \
+  --env VLBI_DATA_ROOT="${INSTALL_DIR}/vlbi" \
+  ${INSTALL_DIR}/vlbi.sif \
+  cwltool \
+  --no-container \
+  --preserve-entire-environment \
+  --parallel \
+  --timestamps \
+  --outdir ${OUTPUT_DIR} \
+  --tmpdir-prefix ${WORK_DIR}/scratch/ \
+  --log-dir ${WORK_DIR}/LOG_DIR/ \
+  --leave-tmpdir \
+  ${INSTALL_DIR}/vlbi/workflows/delay-calibration.cwl \
+  input_delaycal.yaml 2>&1 | tee ${INSTALL_DIR}/pipeline.delay_calibrator_short_testing_branch.log 
+
+
+
