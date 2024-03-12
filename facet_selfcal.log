@@ -10,5 +10,25 @@ wsclean -no-update-model-required -minuv-l 200.0 -maxuv-l 2000000  -size 1600 16
 -nmiter 12 -niter 15000 -circular-beam  ../1?0sMHz/L723586_SB001_uaveraged_v_12E068069t_1*
 
 
-DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=8  msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
-count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 msin=*12?MHz.msdpppconcat msout=L723586_120s_averaged.MS msout.storagemanager=dysco
+DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=10 msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 \
+'msin=[L723586_SB001_uaveraged_v_12E068069t_121MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_123MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_125MHz.msdpppconcat,
+L723586_SB001_uaveraged_v_12E068069t_127MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_129MHz.msdpppconcat]' msout=L723586_120s_averaged.MS msout.storagemanager=dysco ; \
+
+
+DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=10 msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 \
+'msin=[L723586_SB001_uaveraged_v_12E068069t_130MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_132MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_134MHz.msdpppconcat,
+L723586_SB001_uaveraged_v_12E068069t_136MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_138MHz.msdpppconcat]' msout=L723586_130s_averaged.MS msout.storagemanager=dysco ; \
+DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=10 msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 \
+'msin=[L723586_SB001_uaveraged_v_12E068069t_140MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_142MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_144MHz.msdpppconcat,
+L723586_SB001_uaveraged_v_12E068069t_146MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_148MHz.msdpppconcat]' msout=L723586_140s_averaged.MS msout.storagemanager=dysco ; \
+DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=10 msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 \
+'msin=[L723586_SB001_uaveraged_v_12E068069t_150MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_152MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_154MHz.msdpppconcat,
+L723586_SB001_uaveraged_v_12E068069t_156MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_158MHz.msdpppconcat]' msout=L723586_150s_averaged.MS msout.storagemanager=dysco ; \
+DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=10 msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 \
+'msin=[L723586_SB001_uaveraged_v_12E068069t_160MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_162MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_164MHz.msdpppconcat,
+L723586_SB001_uaveraged_v_12E068069t_166MHz.msdpppconcat]' msout=L723586_160s_averaged.MS msout.storagemanager=dysco
