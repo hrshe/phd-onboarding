@@ -1,0 +1,14 @@
+
+wsclean -no-update-model-required -minuv-l 200.0 -maxuv-l 200000 -beam-size 2  -size 1600 1600 -reorder \
+-weight briggs 0.0 -clean-border 1 -parallel-reordering 4 -mgain 0.8 -data-column DATA -padding 1.4 -join-channels \
+-channels-out 3 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 2 -pol i  -gridder wgridder -name image_FB_outer_uvcut -scale 0.5arcsec \
+-nmiter 12 -niter 15000 ../1?0sMHz/L723586_SB001_uaveraged_v_12E068069t_1*
+
+wsclean -no-update-model-required -minuv-l 200.0 -maxuv-l 2000000  -size 1600 1600 -reorder \
+-weight briggs 0.0 -clean-border 1 -parallel-reordering 4 -mgain 0.8 -data-column DATA -padding 1.4 -join-channels \
+-channels-out 3 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 2 -pol i  -gridder wgridder -name image_FB_ILT -scale 0.5arcsec \
+-nmiter 12 -niter 15000 -circular-beam  ../1?0sMHz/L723586_SB001_uaveraged_v_12E068069t_1*
+
+
+DP3 'steps=[avg,count]' avg.type=averager avg.freqstep=8  msin.orderms=False msin.missingdata=True msout.overwrite=True msout.writefullresflag=False \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA numthreads=15 msin=*12?MHz.msdpppconcat msout=L723586_120s_averaged.MS msout.storagemanager=dysco
