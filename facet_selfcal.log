@@ -9,6 +9,10 @@ wsclean -no-update-model-required -minuv-l 200.0 -maxuv-l 2000000  -size 1600 16
 -channels-out 3 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 2 -pol i  -gridder wgridder -name image_FB_ILT -scale 0.5arcsec \
 -nmiter 12 -niter 15000 -circular-beam  ../1?0sMHz/L723586_SB001_uaveraged_v_12E068069t_1*
 
+wsclean -no-update-model-required -minuv-l 100.0 -maxuv-l 300000  -size 4000 4000 -reorder \
+-weight briggs 0.0 -clean-border 1 -parallel-reordering 4 -mgain 0.8 -data-column DATA -padding 1.4 -join-channels \
+-channels-out 3 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 4 -pol i  -gridder wgridder -name OJ287_averaged_FB_Field -scale 8arcsec \
+-nmiter 12 -niter 15000  OJ287_averaged.MS
 
 ************ GOOD 2arcsec  image **************
 hshetgaonkar@lonode001:/scratch/DATA1/OJ287/facet_selfcal/120sMHz/image_FB_outer_uvcut-MFS-image.fits
