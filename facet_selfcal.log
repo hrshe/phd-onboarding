@@ -10,6 +10,11 @@ wsclean -no-update-model-required -minuv-l 200.0 -maxuv-l 2000000  -size 1600 16
 -nmiter 12 -niter 15000 -circular-beam  ../1?0sMHz/L723586_SB001_uaveraged_v_12E068069t_1*
 
 
+************ GOOD 2arcsec  image **************
+hshetgaonkar@lonode001:/scratch/DATA1/OJ287/facet_selfcal/120sMHz/image_FB_outer_uvcut-MFS-image.fits
+contours @ FB_outer_uvcat_2arcsec_3rms.ctr
+************ GOOD 2arcsec  image **************
+
 wsclean -no-update-model-required -minuv-l 40000 -maxuv-l 2000000 -beam-size 0.4 -size 1600 1600 -reorder \
 -weight briggs -0.5 -clean-border 1 -parallel-reordering 4 -mgain 0.8 -data-column DATA -padding 1.4 -join-channels \
 -channels-out 4 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 10 -baseline-averaging 6.13592315154 -pol i  -gridder wgridder -name image_FB_ILT_briggs-0.5 -scale 0.075arcsec \
@@ -38,8 +43,72 @@ count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.dat
 'msin=[L723586_SB001_uaveraged_v_12E068069t_160MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_162MHz.msdpppconcat, L723586_SB001_uaveraged_v_12E068069t_164MHz.msdpppconcat,
 L723586_SB001_uaveraged_v_12E068069t_166MHz.msdpppconcat]' msout=L723586_160s_averaged.MS msout.storagemanager=dysco
 
-This worked. Running selfcal again on this small dataG
+This worked. Running selfcal again on this small data:
 python /scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py L723586_1?0s_averaged.MS --imsize=2048 -i OJ287_facetselfcal_1 --pixelscale=0.075 --robust=0 --skymodelpointsource=0.8 \
 --uvmin=200 --soltype-list="['phaseonly','amplitudeonly','fulljones']" --soltypecycles-list="[0,0,2]" --solint-list="['5min','5min','10min']" --nchan-list="[1,1,1]" \
 --smoothnessconstraint-list="[5.0,5.0,5.0]" --docircular --antennaconstraint-list="['alldutch',None,None]" --stop=10 \
 --helperscriptspath=/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal --helperscriptspathh5merge=/scratch/WORK/hrishi/lofar-vlbi/lofar_helpers/ > facet_selfcal_13thMarch_1.log 2>&1
+This failed on full jones step:
+Fulljones and flagging not implemtened
+Traceback (most recent call last):
+  File "/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py", line 6660, in <module>
+    main()
+  File "/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py", line 6587, in main
+    calibrateandapplycal(mslist, i, args, solint_list, nchan_list, args['soltype_list'], soltypecycles_list,\
+  File "/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py", line 5185, in calibrateandapplycal
+    runDPPPbase(ms, solint_list[soltypenumber][msnumber], nchan_list[soltypenumber][msnumber], parmdb, soltype, \
+  File "/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py", line 5635, in runDPPPbase
+    raise Exception('Fulljones and flagging not implemtened')
+Exception: Fulljones and flagging not implemtened
+
+
+Also, this was very slow. Trying to average more:
+DP3 'steps=[avg,count]' avg.type=averager avg.timestep=4 msin.orderms=False msout.overwrite=True \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA  \
+'msin=[L723586_120s_averaged.MS,L723586_130s_averaged.MS,L723586_140s_averaged.MS,L723586_150s_averaged.MS,L723586_160s_averaged.MS]' msout=OJ287_averaged.MS
+
+python /scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py OJ287_averaged.MS --imsize=2048 -i OJ287_averaged_selfcal --pixelscale=0.075 --robust=0 --skymodelpointsource=0.8 \
+--uvmin=200 --soltype-list="['scalarphasediff','scalarphase','scalarcomplexgain']" --soltypecycles-list="[0,0,3]" --solint-list="['5min','5min','10min']" --nchan-list="[1,1,1]" \
+--smoothnessconstraint-list="[5.0,5.0,5.0]" --docircular --antennaconstraint-list="['alldutch',None,None]" --stop=6 \
+--helperscriptspath=/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal --helperscriptspathh5merge=/scratch/WORK/hrishi/lofar-vlbi/lofar_helpers/ > facet_selfcal_13thMarch_1.log 2>&1
+
+This too is slow. Averaging a lot more!
+DP3 'steps=[avg,count]' avg.type=averager avg.timestep=8 msin.orderms=False msout.overwrite=True \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA  \
+"'msin=[L723586_120s_averaged.MS,L723586_130s_averaged.MS,L723586_140s_averaged.MS,L723586_150s_averaged.MS,L723586_160s_averaged.MS]' msout=OJ287_averaged.MS
+For this:
+MSWriter msout.
+  output MS:      /scratch/DATA1/OJ287/facet_selfcal/averaged/OJ287_averaged.MS
+  nchan:          48
+  ncorrelations:  4
+  nbaselines:     2775
+  ntimes:         450
+  time interval:  32.0445
+  DATA column:    DATA
+  FLAG column:    FLAG
+  WEIGHT column:  WEIGHT_SPECTRUM
+  Compressed:     no
+"  use thread:     true
+
+Including 160s increased off source rms. Trying without it
+DP3 'steps=[avg,count]' avg.type=averager avg.timestep=8 msin.orderms=False msout.overwrite=True \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=DATA msout.datacolumn=DATA  \
+'msin=[L723586_120s_averaged.MS,L723586_130s_averaged.MS,L723586_140s_averaged.MS,L723586_150s_averaged.MS]' msout=OJ287_averaged.MS
+MSWriter msout.
+  output MS:      /scratch/DATA1/OJ287/facet_selfcal/averaged/OJ287_averaged.MS
+  nchan:          40
+  ncorrelations:  4
+  nbaselines:     2775
+  ntimes:         450
+  time interval:  32.0445
+  DATA column:    DATA
+  FLAG column:    FLAG
+  WEIGHT column:  WEIGHT_SPECTRUM
+  Compressed:     no
+  use thread:     true
+
+Now started facet self cal on this very_averaged data.
+python /scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py ../OJ287_averaged.MS --imsize=2048 -i OJ287_averaged_selfcal --pixelscale=0.075 --robust=0 --skymodelpointsource=0.8 \
+ --uvmin=200 --soltype-list="['scalarphasediff','scalarphase','scalarcomplexgain']" --soltypecycles-list="[0,0,3]" --solint-list="['5min','5min','7min']" --nchan-list="[1,1,1]" \
+ --smoothnessconstraint-list="[5.0,5.0,5.0]" --docircular --antennaconstraint-list="['alldutch',None,None]" --stop=6 \
+ --helperscriptspath=/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal --helperscriptspathh5merge=/scratch/WORK/hrishi/lofar-vlbi/lofar_helpers/ > facet_selfcal_13thMarch_1.log 2>&1
