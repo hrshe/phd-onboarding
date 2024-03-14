@@ -116,3 +116,63 @@ python /scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py ../OJ
  --uvmin=200 --soltype-list="['scalarphasediff','scalarphase','scalarcomplexgain']" --soltypecycles-list="[0,0,3]" --solint-list="['5min','5min','7min']" --nchan-list="[1,1,1]" \
  --smoothnessconstraint-list="[5.0,5.0,5.0]" --docircular --antennaconstraint-list="['alldutch',None,None]" --stop=6 \
  --helperscriptspath=/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal --helperscriptspathh5merge=/scratch/WORK/hrishi/lofar-vlbi/lofar_helpers/ > facet_selfcal_13thMarch_1.log 2>&1
+This seemed to work. Hotspot is more clear. Jet not so much.It is in /scratch/DATA1/OJ287/facet_selfcal/very_averaged/facet_selfcal2/. Checking diagnostics.
+
+
+On the side, I think the CORRECTED_DATA col in '' has the first results of delay cal applied. Trying to average and image this.
+DP3 'steps=[avg,count]' avg.type=averager avg.timestep=16 avg.freqstep=40 msin.orderms=False msout.overwrite=True \
+count.savetojson=True count.jsonfilename=out.json msin.datacolumn=CORRECTED_DATA msout.datacolumn=DATA  \
+'msin=[L723586_SB001_uv_12E068069t_121MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_123MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_125MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_127MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_129MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_130MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_132MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_134MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_136MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_138MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_140MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_142MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_144MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_146MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_148MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_150MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_152MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_154MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_156MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_158MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_160MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_162MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_164MHz.msdpppconcat, \
+L723586_SB001_uv_12E068069t_166MHz.msdpppconcat, \
+]' \
+msout=OJ287_CORRECTRED_averaged.MS
+MSWriter msout.
+  output MS:      /data/LOFAR/P6/OJ287/LC12_Mooney_June/OJ287_PIPELINE/Delay-Calibration/OJ287_CORRECTRED_averaged.MS
+  nchan:          100
+  ncorrelations:  4
+  nbaselines:     2775
+  ntimes:         899
+  time interval:  16.0222
+  DATA column:    DATA
+  FLAG column:    FLAG
+  WEIGHT column:  WEIGHT_SPECTRUM
+  Compressed:     no
+  use thread:     true
+
+Put this data in /scratch/DATA1/OJ287/facet_selfcal/CORRECTED_DATA/
+Now imaging as earlier:
+wsclean -no-update-model-required -minuv-l 200.0 -maxuv-l 200000 -beam-size 2 -size 1600 1600 -reorder \
+-weight briggs 0.0 -clean-border 1 -parallel-reordering 4 -mgain 0.8 -data-column DATA -padding 1.4 -join-channels \
+-channels-out 3 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 2 -pol i  -gridder wgridder -name image_FB_outer_uvcut -scale 0.5arcsec \
+-nmiter 12 -niter 15000 OJ287_CORRECTRED_averaged.MS
+
+wsclean -no-update-model-required -minuv-l 20000 -maxuv-l 4000000 -circular-beam -size 1600 1600 -reorder \
+-weight briggs 0.0 -clean-border 1 -parallel-reordering 4 -mgain 0.8 -data-column DATA -padding 1.4 -join-channels \
+-channels-out 3 -auto-mask 2.5 -auto-threshold 0.5 -fit-spectral-pol 2 -pol i  -gridder wgridder -name image_FB_ILT -scale 0.075arcsec \
+-nmiter 12 -niter 15000 OJ287_CORRECTRED_averaged.MS
+
+
+The CORRECTED_DATA approach failed
+
