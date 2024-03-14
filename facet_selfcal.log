@@ -174,5 +174,10 @@ wsclean -no-update-model-required -minuv-l 20000 -maxuv-l 4000000 -circular-beam
 -nmiter 12 -niter 15000 OJ287_CORRECTRED_averaged.MS
 
 
-The CORRECTED_DATA approach failed
+The CORRECTED_DATA approach failed.
 
+Checking facet self cal by giving region for cleaning: 
+python /scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal/facetselfcal.py ../OJ287_averaged.MS --imsize=2048 -i OJ287_averaged_selfcal --pixelscale=0.075 \
+--robust=-0.5 --skymodelpointsource=1  --uvmin=40000 --soltype-list="['scalarphasediff','scalarphase','scalarcomplexgain']" --soltypecycles-list="[0,1,3]" --fitsmask=../../oj287_jet_mask.fits \
+--solint-list="['5min','10min','20min']" --nchan-list="[1,1,1]"  --smoothnessconstraint-list="[5.0,5.0,10.0]" --docircular --antennaconstraint-list="['alldutch',None,None]" \
+--stop=10  --helperscriptspath=/scratch/WORK/hrishi/lofar-vlbi/lofar_facet_selfcal --helperscriptspathh5merge=/scratch/WORK/hrishi/lofar-vlbi/lofar_helpers/ > facet_selfcal_14thMarch_2_.log 2>&1
