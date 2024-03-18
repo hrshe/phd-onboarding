@@ -1,5 +1,5 @@
 REFANTS: VA09, VA23, VA27. Also 7, 21, 25 respectively
-Flux calib  -> FieldID:2 and Name: 0838+498
+Flux calib  -> FieldID:2 and Name: 0538+498
 Phase calib -> FieldID:5 and Name: 1225+368
 Target      -> FieldID:4 and Name: 0851+202
 
@@ -34,9 +34,66 @@ interp=['',], append=True)
 
 5) SCALING THE AMPLITUDE GAINS
 
-myscale = fluxscale(vis='AK319_BandL_ConfB.ms/', 
-      ...:                     caltable='AK319_BandL_ConfB.G1/',  
-      ...:                     fluxtable='AK319_BandL_ConfB.fluxscale1',  
-      ...:                     reference='1328+307', 
-      ...:                     transfer=['2200+420'], 
-      ...:                     incremental=False) 
+myscale = fluxscale(vis='oj287.ms/', 
+caltable='oj287.G1/',  
+fluxtable='oj287.fluxscale1',  
+reference='0538+498', 
+transfer=['1225+368'], 
+incremental=False) 
+
+6) APPLYCAL
+
+applycal(vis='oj287.ms/', 
+field='0538+498', 
+gaintable=['oj287.fluxscale1', 
+            'oj287.G0all/'], 
+gainfield=['','0538+498','',''],  
+interp=['nearest',''], 
+calwt=False) 
+
+
+applycal(vis='oj287.ms/', 
+field='1225+368', 
+gaintable=['oj287.fluxscale1', 
+           'oj287.G0all/'], 
+gainfield=['','1225+368','',''],  
+interp=['nearest',''], 
+calwt=False)  
+
+
+applycal(vis='oj287.ms/', 
+field='0851+202', 
+gaintable=['oj287.fluxscale1', 
+           'oj287.G0all/'], 
+gainfield=['','1225+368','',''],  
+interp=['linear',''], 
+calwt=False)   
+
+
+7) Inspection Plots
+plotms(vis='oj287.ms',field='2',correlation='RR,LL',
+       antenna='',avgtime='60',xaxis='channel',yaxis='amp',
+       ydatacolumn='corrected',coloraxis='corr',
+       plotfile='plotms_oj287-fld2-corrected-amp.png')
+
+plotms(vis='oj287.ms',field='2',correlation='RR,LL',
+       antenna='',avgtime='60',xaxis='channel',yaxis='phase',
+       ydatacolumn='corrected',coloraxis='corr',
+       plotrange=[-1,-1,-180,180],
+       plotfile='plotms_oj287-fld2-corrected-phase.png')
+
+plotms(vis='oj287.ms',field='5',correlation='RR,LL',
+       antenna='',avgtime='60',xaxis='channel',yaxis='amp',
+       ydatacolumn='corrected',coloraxis='corr',
+       plotfile='plotms_oj287-fld5-corrected-amp.png')
+
+plotms(vis='oj287.ms',field='5',correlation='RR,LL',
+       antenna='',avgtime='60',xaxis='channel',yaxis='phase',
+       ydatacolumn='corrected',coloraxis='corr',
+       plotrange=[-1,-1,-180,180],
+       plotfile='plotms_oj287-fld5-corrected-phase.png')
+
+
+8) split(vis='oj287.ms',outputvis='oj287_calibrated.ms', datacolumn='corrected',field='0851+202',correlation='RR,LL')
+
+9) 
