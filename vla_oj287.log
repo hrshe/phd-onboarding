@@ -120,7 +120,7 @@ tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_multiscale_spw0',
 
 
 
-Self Calibration:
+10) Self Calibration:
 delmod('oj287_calibrated_spw0.ms')
 
 tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_calibrated_spw0_I',
@@ -164,3 +164,58 @@ tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_calibrated_spw0_multiscal
       weighting='briggs',robust=0.0,
       pbcor=False,
       savemodel='modelcolumn')
+
+------------- Round 2 ---------------
+gaincal(vis='oj287_calibrated_spw0.ms',caltable='oj287_calibrated_spw0.selfcal2',
+        field='',spw='',selectdata=False,
+        solint='100s',refant='7',minblperant=4,minsnr=3,
+        gaintype='G',calmode='p')
+
+applycal(vis='oj287_calibrated_spw0.ms',
+         field='',spw='',selectdata=False,
+         gaintable= ['oj287_calibrated_spw0.selfcal2'],gainfield=[''],interp=['nearest'],
+         calwt=[False],applymode='calflag')
+
+tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_calibrated_spw0_multiscale_selfcal2',
+      field='',spw='',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1,threshold='1mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45],smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024],cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
+
+------------- Round 3 ---------------
+gaincal(vis='oj287_calibrated_spw0.ms',caltable='oj287_calibrated_spw0.selfcal3',
+        field='',spw='',selectdata=False,
+        solint='30s',refant='7',minblperant=4,minsnr=3,
+        gaintype='G',calmode='p')
+
+applycal(vis='oj287_calibrated_spw0.ms',
+         field='',spw='',selectdata=False,
+         gaintable= ['oj287_calibrated_spw0.selfcal2'],gainfield=[''],interp=['nearest'],
+         calwt=[False],applymode='calflag')
+
+tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_calibrated_spw0_multiscale_selfcal2',
+      field='',spw='',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1,threshold='1mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45],smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024],cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
+
+
+
