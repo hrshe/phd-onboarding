@@ -94,6 +94,26 @@ plotms(vis='oj287.ms',field='5',correlation='RR,LL',
        plotfile='plotms_oj287-fld5-corrected-phase.png')
 
 
-8) split(vis='oj287.ms',outputvis='oj287_calibrated.ms', datacolumn='corrected',field='0851+202',correlation='RR,LL')
+8) 
+split(vis='oj287.ms',outputvis='oj287_calibrated_spw0.ms', datacolumn='corrected',field='0851+202',correlation='RR,LL',spw='0')
+split(vis='oj287.ms',outputvis='oj287_calibrated_spw1.ms', datacolumn='corrected',field='0851+202',correlation='RR,LL',spw='1')
 
-9) 
+9) Imaging
+plotms(vis='oj287_calibrated_spw0.ms',xaxis='uvwave',yaxis='amp',
+       ydatacolumn='data', field='0',avgtime='30',correlation='RR',
+       plotfile='plotms_oj287-uvwave.png',overwrite=True)
+
+tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_multiscale_spw0',
+      field='',spw='',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1, threshold='1.0mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45], smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024], cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
