@@ -250,3 +250,116 @@ CASA <76>: tclean(vis='oj287_calibrated_spw0.ms',imagename='oj287_calibrated_spw
 
 
 
+SelfCal on lonode001:
+flagdata(vis='oj287_calibrated.ms/', mode='shadow', tolerance=0.0, flagbackup=False,spw='0,1')
+flagdata(vis='oj287_calibrated.ms/',  mode='clip', clipzeros=True, flagbackup=False,spw='0,1')
+flagdata(vis='oj287_calibrated.ms/',  mode='quack', quackinterval=5.0, quackmode='beg', flagbackup=False, spw='0,1')
+
+flagdata(vis='oj287_calibrated.ms/', mode='manual', antenna='VA12', action='apply', writeflags=True, flagbackup=True, autocorr=False ,spw='0,1')
+flagdata(vis='oj287_calibrated.ms/', mode='manual', antenna='VA16', action='apply', writeflags=True, flagbackup=True, autocorr=False ,spw='0,1')
+
+
+Now self cal:
+------ Round 1 -------
+
+
+delmod('oj287_calibrated.ms')
+
+tclean(vis='oj287_calibrated.ms',imagename='oj287_calibrated_I',
+      field='',spw='0,1',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1,threshold='1mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45],smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024],cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
+
+
+gaincal(vis='oj287_calibrated.ms',caltable='oj287_calibrated.selfcal1',
+        field='',spw='0,1',selectdata=False,
+        solint='30s',refant='7',minblperant=4,minsnr=3,
+        gaintype='G',calmode='p')
+
+applycal(vis='oj287_calibrated.ms',
+         field='',spw='0,1',selectdata=False,
+         gaintable= ['oj287_calibrated.selfcal1'],gainfield=[''],interp=['nearest'],
+         calwt=[False],applymode='calflag')
+
+
+tclean(vis='oj287_calibrated.ms',imagename='oj287_calibrated_multiscale_selfcal1',
+      field='',spw='0,1',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1,threshold='1mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45],smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024],cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
+
+------------
+
+gaincal(vis='oj287_calibrated.ms',caltable='oj287_calibrated.selfcal2',
+        field='',spw='0,1',selectdata=False,
+        solint='30s',refant='7',minblperant=4,minsnr=3,
+        gaintype='G',calmode='p')
+
+applycal(vis='oj287_calibrated.ms',
+         field='',spw='0,1',selectdata=False,
+         gaintable= ['oj287_calibrated.selfcal2'],gainfield=[''],interp=['nearest'],
+         calwt=[False],applymode='calflag')
+
+tclean(vis='oj287_calibrated.ms',imagename='oj287_calibrated_multiscale_selfcal2',
+      field='',spw='0,1',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1,threshold='1mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45],smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024],cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
+
+
+-------------
+
+gaincal(vis='oj287_calibrated.ms',caltable='oj287_calibrated.selfcal3',
+        field='',spw='0,1',selectdata=False,
+        solint='30s',refant='7',minblperant=4,minsnr=3,
+        gaintype='G',calmode='ap')
+
+applycal(vis='oj287_calibrated.ms',
+         field='',spw='0,1',selectdata=False,
+         gaintable= ['oj287_calibrated.selfcal3'],gainfield=[''],interp=['nearest'],
+         calwt=[False],applymode='calflag')
+
+tclean(vis='oj287_calibrated.ms',imagename='oj287_calibrated_multiscale_selfcal3',
+      field='',spw='0,1',
+      specmode='mfs',
+      niter=20000,
+      gain=0.1,threshold='1mJy',
+      gridder='standard',
+      deconvolver='multiscale',
+      scales=[0, 5, 15, 45],smallscalebias=0.9,
+      interactive=True,
+      imsize=[1024,1024],cell=['0.075arcsec','0.075arcsec'],
+      stokes='I',
+      weighting='briggs',robust=0.0,
+      pbcor=False,
+      savemodel='modelcolumn')
+
+
